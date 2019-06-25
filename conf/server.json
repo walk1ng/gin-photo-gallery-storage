@@ -1,0 +1,10 @@
+{
+    "JWT_SECRET":"fdsfadsfsfdafd",
+    "DB_TYPE":"mysql",
+    "DB_HOST":"127.0.0.1",
+    "DB_PORT":"3306",
+    "DB_USER":"user",
+    "DB_PWD":"password",
+    "DB_NAME":"photo",
+    "SERVER_PORT":"8088"
+}
