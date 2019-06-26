@@ -34,6 +34,6 @@ func (cfg *Cfg) Get(key string) string {
 	if val, ok := cfg.ConfigMap[key]; !ok {
 		return val
 	}
-	log.Fatalln("No such config term: %s!", key)
+	log.Fatalf("No such config term: %s", key)
 	return ""
 }
