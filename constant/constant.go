@@ -24,4 +24,8 @@ const (
 	CookieMaxAge = 1800
 	LoginMaxAge  = 1800
 	LoginUser    = "LOGIN_"
+
+	// Redis constants
+	RedisHost = "REDIS_HOST"
+	RedisPort = "REDIS_PORT"
 )

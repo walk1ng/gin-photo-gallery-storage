@@ -35,5 +35,16 @@ func init() {
 	}
 
 	db.SingularTable(true)
+	if !db.HasTable(&Auth{}) {
+		db.CreateTable(&Auth{})
+	}
+
+	if !db.HasTable(&Bucket{}) {
+		db.CreateTable(&Bucket{})
+	}
+
+	if !db.HasTable(&Photo{}) {
+		db.CreateTable(&Photo{})
+	}
 
 }
