@@ -3,6 +3,10 @@ package models
 import (
 	"errors"
 	"log"
+	"mime/multipart"
+	"os"
+
+	"github.com/walk1ng/gin-photo-gallery-storage/utils"
 
 	"github.com/walk1ng/gin-photo-gallery-storage/constant"
 
@@ -27,7 +31,7 @@ var ErrNoSuchPhoto = errors.New("no such photo")
 var ErrPhotoFileBroken = errors.New("photo file is broken")
 
 // AddPhoto func add a new photo
-func AddPhoto(photoToAdd *Photo) (*Photo, error) {
+func AddPhoto(photoToAdd *Photo, photoFileHeader *multipart.FileHeader) (*Photo, string, error) {
 	trx := db.Begin()
 	defer trx.Commit()
 
@@ -38,7 +42,7 @@ func AddPhoto(photoToAdd *Photo) (*Photo, error) {
 		First(&photo)
 
 	if photo.ID > 0 {
-		return nil, ErrPhotoExists
+		return nil, "", ErrPhotoExists
 	}
 
 	photo.AuthID = photoToAdd.AuthID
@@ -52,7 +56,7 @@ func AddPhoto(photoToAdd *Photo) (*Photo, error) {
 	err := trx.Create(&photo).Error
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, "", err
 	}
 
 	// update the related bucket
@@ -64,13 +68,17 @@ func AddPhoto(photoToAdd *Photo) (*Photo, error) {
 	if err != nil {
 		trx.Rollback()
 		log.Println(err)
-		return nil, err
+		return nil, "", err
 	}
 
 	// todo: upload the photo to the cloud
-
-	return &photo, nil
-
+	if photoFile, err := photoFileHeader.Open(); err == nil {
+		uploadID := utils.Upload(photo.ID, photo.Name, photoFile.(*os.File))
+		return &photo, uploadID, nil
+	} else {
+		log.Println(err)
+		return nil, "", ErrPhotoFileBroken
+	}
 }
 
 // DeletePhotoByID func delete a photo by ID
@@ -175,4 +183,19 @@ func GetPhotosByBucketID(bucketID uint, offset int) ([]Photo, error) {
 	return photos, nil
 }
 
-// todo: check photo upload status
+// GetPhotoUploadStatus func check photo upload status
+func GetPhotoUploadStatus(uploadID string) int {
+	status := utils.GetUploadStatus(uploadID)
+	switch status {
+	case -2:
+		return constant.PhotoNotExist
+	case -1:
+		return constant.PhotoUploadError
+	case 0:
+		return constant.PhotoUploadSuccess
+	case 1:
+		return constant.PhotoAddInProcess
+	default:
+		return constant.InvalidParams
+	}
+}

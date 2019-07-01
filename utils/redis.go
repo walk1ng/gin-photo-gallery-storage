@@ -12,7 +12,7 @@ import (
 )
 
 var RedisClient *redis.Client
-var initComplete = make(chan struct{}, 1)
+var InitComplete = make(chan struct{}, 1)
 
 // Initialize the redis client
 func init() {
@@ -24,7 +24,7 @@ func init() {
 		Password: "",
 		DB:       0,
 	})
-	initComplete <- struct{}{}
+	InitComplete <- struct{}{}
 }
 
 // AddAuthToRedis func add an auth to redis mean the user has logged in
@@ -71,7 +71,7 @@ func SetUploadStatus(key string, value int) bool {
 }
 
 // GetPhotoUploadStatus func get the upload status for a photo
-func GetPhotoUploadStatus(key string) int {
+func GetUploadStatus(key string) int {
 	val := RedisClient.Get(key).Val()
 	if val == "" {
 		return -2 // no such key

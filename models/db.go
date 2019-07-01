@@ -3,7 +3,11 @@ package models
 import (
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"time"
+
+	"github.com/walk1ng/gin-photo-gallery-storage/utils"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
@@ -47,4 +51,38 @@ func init() {
 		db.CreateTable(&Photo{})
 	}
 
+	// run a goroutine never exit to listen to redis callbacks
+	go listenRedisCallback()
+
+}
+
+func listenRedisCallback() {
+	// wait until the utils package is initialized
+	<-utils.InitComplete
+
+	// subscribe the redis channels
+	updateChan := utils.RedisClient.Subscribe(constant.PhotoURLUpdateChannel).Channel()
+	deleteChan := utils.RedisClient.Subscribe(constant.PhotoDeleteChannel).Channel()
+
+	for {
+		select {
+		case msg := <-updateChan:
+			photoID, _ := strconv.Atoi(msg.Payload[:strings.Index(msg.Payload, "-")])
+			photoURL := msg.Payload[strings.Index(msg.Payload, "-")+1:]
+			dberr := UpdatePhotoURL(uint(photoID), photoURL)
+			if dberr != nil {
+				log.Println("callback error: update photo url.")
+			} else {
+				utils.SetUploadStatus(fmt.Sprintf(constant.PhotoUpdateIDFormat, photoID), 0)
+			}
+
+		case msg := <-deleteChan:
+			photoID, _ := strconv.Atoi(msg.Payload)
+			if err := DeletePhotoByID(uint(photoID)); err != nil {
+				log.Println("callback error: delete photo.")
+			} else {
+				utils.SetUploadStatus(fmt.Sprintf(constant.PhotoUpdateIDFormat, photoID), -1)
+			}
+		}
+	}
 }

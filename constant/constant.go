@@ -28,4 +28,15 @@ const (
 	// Redis constants
 	RedisHost = "REDIS_HOST"
 	RedisPort = "REDIS_PORT"
+
+	// Azure Storage constants
+	AzStorageBlobURLEndpointFormat = "https://%s.blob.core.windows.net/%s"
+	AzStorageAccountName           = "AZ_STORAGE_ACCOUNT"
+	AzStorageAccountKey            = "AZ_STORAGE_ACCOUNT_KEY"
+	AzStorageContainerName         = "AZ_STORAGE_CONTAINER"
+
+	// Callback constants
+	PhotoURLUpdateChannel = "PHOTO_URL_UPDATE"
+	PhotoDeleteChannel    = "PHOTO_DELETE"
+	PhotoUpdateIDFormat   = "photo_%d"
 )

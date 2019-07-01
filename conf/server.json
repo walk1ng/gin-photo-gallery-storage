@@ -8,5 +8,8 @@
     "DB_NAME":"photo",
     "SERVER_PORT":"8088",
     "REDIS_HOST":"127.0.0.1",
-    "REDIS_PORT":"6379"
+    "REDIS_PORT":"6379",
+    "AZ_STORAGE_ACCOUNT":"xyz123",
+    "AZ_STORAGE_ACCOUNT_KEY":"fooooobarrrrrf",
+    "AZ_STORAGE_CONTAINER":"ginphoto"
 }
