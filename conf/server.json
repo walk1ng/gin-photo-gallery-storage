@@ -1,4 +1,6 @@
 {
+    "SERVER_DOMAIN":"",
+    "SERVER_PATH":"",
     "JWT_SECRET":"fdsfadsfsfdafd",
     "DB_TYPE":"mysql",
     "DB_HOST":"127.0.0.1",

@@ -8,8 +8,10 @@ const (
 	PhotoStorageAdmin = "admin"
 
 	// Server constants
-	ServerPort = "SERVER_PORT"
-	PageSize   = 20
+	ServerPort   = "SERVER_PORT"
+	PageSize     = 20
+	ServerDomain = "SERVER_DOMAIN"
+	ServerPath   = "SERVER_PATH"
 
 	// DB constants
 	DBConnect = "%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local"

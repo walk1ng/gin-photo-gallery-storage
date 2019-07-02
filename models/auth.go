@@ -10,7 +10,7 @@ import (
 // Auth struct model represent auth table
 type Auth struct {
 	BaseModel
-	UserName string `json:"userName" gorm:"type:varchar(16)"`
+	UserName string `json:"user_name" gorm:"type:varchar(16)"`
 	Password string `json:"password" gorm:"type:varchar(255)"`
 	Email    string `json:"email" gorm:"type:varchar(128)"`
 }
