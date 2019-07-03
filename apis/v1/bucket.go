@@ -209,7 +209,7 @@ func GetBucketByAuthID(context *gin.Context) {
 
 	data := make(map[string]interface{})
 	if !validCheck.HasErrors() {
-		if buckets, err := models.GetBucketByAuthID(authID, offset); err != nil {
+		if buckets, err := models.GetBucketByAuthID(uint(authID), offset); err != nil {
 			responseCode = constant.InternalServerError
 		} else {
 			responseCode = constant.BucketGetSuccess
