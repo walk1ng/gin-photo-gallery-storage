@@ -41,7 +41,7 @@ func AddAuth(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e)
+			log.Println(e.Message)
 		}
 	}
 
@@ -92,7 +92,7 @@ func CheckAuth(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e)
+			log.Println(e.Message)
 		}
 	}
 
