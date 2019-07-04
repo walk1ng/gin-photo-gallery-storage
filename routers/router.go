@@ -33,5 +33,16 @@ func init() {
 			bucketGroup.GET("/get_by_id", authMiddleware, refreshMiddleware, v1.GetBucketByID)
 			bucketGroup.GET("/get_by_auth_id", authMiddleware, refreshMiddleware, paginationMiddleware, v1.GetBucketByAuthID)
 		}
+
+		// photo
+		photoGroup := v1Group.Group("/photo")
+		{
+			photoGroup.POST("/add", authMiddleware, refreshMiddleware, v1.AddPhoto)
+			photoGroup.DELETE("/delete", authMiddleware, refreshMiddleware, v1.DeletePhoto)
+			photoGroup.PUT("/update", authMiddleware, refreshMiddleware, v1.UpdatePhoto)
+			photoGroup.GET("/get_by_id", authMiddleware, refreshMiddleware, v1.GetPhotoByID)
+			photoGroup.GET("/get_by_bucket_id", authMiddleware, refreshMiddleware, paginationMiddleware, v1.GetPhotoByBucketID)
+			photoGroup.GET("/upload_status", authMiddleware, refreshMiddleware, v1.GetPhotoUploadStatus)
+		}
 	}
 }
