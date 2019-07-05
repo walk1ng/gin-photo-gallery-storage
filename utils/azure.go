@@ -3,9 +3,10 @@ package utils
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/url"
 	"os"
+
+	"go.uber.org/zap"
 
 	"github.com/walk1ng/gin-photo-gallery-storage/conf"
 
@@ -27,7 +28,7 @@ func init() {
 	// create a default request pipeline with storage account name and key
 	cred, err := azblob.NewSharedKeyCredential(azStorageAccountName, azStorageAccountKey)
 	if err != nil {
-		log.Fatalf("az: invalid credential with error: %s.", err.Error())
+		AppLogger.Fatal(fmt.Sprintf("az: invalid credential with error: %s.", err.Error()), zap.String("service", "init()"))
 	}
 
 	p := azblob.NewPipeline(cred, azblob.PipelineOptions{})
@@ -45,7 +46,7 @@ func Upload(photoID uint, fileName string, file *os.File) string {
 func AsyncUpload(uploadID string, photoID uint, fileName string, file *os.File) {
 	// set upload status in redis
 	if !SetUploadStatus(uploadID, 1) {
-		log.Println("failed to set upload status before upload.")
+		AppLogger.Info("failed to set upload status before upload.", zap.String("service", "AsyncUpload()"))
 		return
 	}
 
@@ -58,9 +59,9 @@ func AsyncUpload(uploadID string, photoID uint, fileName string, file *os.File) 
 
 	// if failed to upload, send callback to redis to delete photo
 	if err != nil {
-		log.Println(err)
+		AppLogger.Info(err.Error(), zap.String("service", "AsyncUpload()"))
 		if !SendToChannel(constant.PhotoDeleteChannel, fmt.Sprintf("%d", photoID)) {
-			log.Println("failed to send delete-photo message to channel.")
+			AppLogger.Info("failed to send delete-photo message to channel.", zap.String("service", "AsyncUpload()"))
 		}
 		return
 	}
@@ -69,7 +70,7 @@ func AsyncUpload(uploadID string, photoID uint, fileName string, file *os.File) 
 	photoURL := fmt.Sprintf(constant.AzStorageBlobURLEndpointFormat, azStorageAccountName, azStorageContainerName) + "/" + fileName
 	updateURLMessage := fmt.Sprintf("%d-%s", photoID, photoURL)
 	if !SendToChannel(constant.PhotoURLUpdateChannel, updateURLMessage) {
-		log.Println("failed to send update-photo-url message to channel")
+		AppLogger.Info("failed to send update-photo-url message to channel.", zap.String("service", "AsyncUpload()"))
 	}
 	return
 }

@@ -2,9 +2,10 @@ package utils
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"time"
+
+	"go.uber.org/zap"
 
 	"github.com/go-redis/redis"
 	"github.com/walk1ng/gin-photo-gallery-storage/conf"
@@ -32,7 +33,7 @@ func AddAuthToRedis(username string) error {
 	key := fmt.Sprintf("%s%s", constant.LoginUser, username)
 	err := RedisClient.Set(key, username, constant.LoginMaxAge*time.Second).Err()
 	if err != nil {
-		log.Fatalln(err)
+		AppLogger.Info(err.Error(), zap.String("service", "AddAuthToRedis()"))
 		return err
 	}
 	return nil
@@ -43,7 +44,7 @@ func IsAuthInRedis(username string) bool {
 	key := fmt.Sprintf("%s%s", constant.LoginUser, username)
 	err := RedisClient.Get(key).Err()
 	if err != nil {
-		log.Println(err)
+		AppLogger.Info(err.Error(), zap.String("service", "IsAuthInRedis()"))
 		return false
 	}
 	return true
@@ -54,7 +55,7 @@ func RemoveAuthFromRedis(username string) bool {
 	key := fmt.Sprintf("%s%s", constant.LoginUser, username)
 	err := RedisClient.Del(key).Err()
 	if err != nil {
-		log.Println(err)
+		AppLogger.Info(err.Error(), zap.String("service", "RemoveAuthFromRedis()"))
 		return false
 	}
 	return true
@@ -64,7 +65,7 @@ func RemoveAuthFromRedis(username string) bool {
 func SetUploadStatus(key string, value int) bool {
 	err := RedisClient.Set(key, value, 0).Err()
 	if err != nil {
-		log.Println(err)
+		AppLogger.Info(err.Error(), zap.String("service", "SetUploadStatus()"))
 		return false
 	}
 	return true
@@ -84,7 +85,7 @@ func GetUploadStatus(key string) int {
 func SendToChannel(channel, message string) bool {
 	err := RedisClient.Publish(channel, message).Err()
 	if err != nil {
-		log.Println(err)
+		AppLogger.Info(err.Error(), zap.String("service", "SendToChannel()"))
 		return false
 	}
 	return true

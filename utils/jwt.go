@@ -3,8 +3,8 @@ package utils
 import (
 	"github.com/walk1ng/gin-photo-gallery-storage/conf"
 	"github.com/walk1ng/gin-photo-gallery-storage/constant"
+	"go.uber.org/zap"
 
-	"log"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -31,7 +31,7 @@ func GenerateJWT(userName string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	jwtString, err := token.SignedString([]byte(conf.ServerCfg.Get(constant.JwtSecret)))
 	if err != nil {
-		log.Fatalln("JWT generation error")
+		AppLogger.Fatal(err.Error(), zap.String("service", "GenerateJWT()"))
 		return "", err
 	}
 	return jwtString, nil

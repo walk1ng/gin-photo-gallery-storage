@@ -2,12 +2,12 @@ package models
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/walk1ng/gin-photo-gallery-storage/utils"
+	"go.uber.org/zap"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
@@ -35,7 +35,7 @@ func init() {
 
 	db, err := gorm.Open(dbType, fmt.Sprintf(constant.DBConnect, dbUser, dbPwd, dbHost, dbPort, dbName))
 	if err != nil {
-		log.Fatalln("failed to connect database!")
+		utils.AppLogger.Fatal(err.Error(), zap.String("service", "init()"))
 	}
 
 	db.SingularTable(true)
@@ -71,7 +71,7 @@ func listenRedisCallback() {
 			photoURL := msg.Payload[strings.Index(msg.Payload, "-")+1:]
 			dberr := UpdatePhotoURL(uint(photoID), photoURL)
 			if dberr != nil {
-				log.Println("callback error: update photo url.")
+				utils.AppLogger.Info("callback error: update photo url.", zap.String("service", "listenRedisCallback()"))
 			} else {
 				utils.SetUploadStatus(fmt.Sprintf(constant.PhotoUpdateIDFormat, photoID), 0)
 			}
@@ -79,7 +79,7 @@ func listenRedisCallback() {
 		case msg := <-deleteChan:
 			photoID, _ := strconv.Atoi(msg.Payload)
 			if err := DeletePhotoByID(uint(photoID)); err != nil {
-				log.Println("callback error: delete photo.")
+				utils.AppLogger.Info("callback error: delete photo.", zap.String("service", "listenRedisCallback()"))
 			} else {
 				utils.SetUploadStatus(fmt.Sprintf(constant.PhotoUpdateIDFormat, photoID), -1)
 			}

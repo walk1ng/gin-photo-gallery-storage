@@ -1,8 +1,9 @@
 package middlewares
 
 import (
-	"log"
 	"net/http"
+
+	"go.uber.org/zap"
 
 	"github.com/walk1ng/gin-photo-gallery-storage/utils"
 
@@ -17,7 +18,7 @@ func GetAuthMiddleware() func(*gin.Context) {
 
 		// cannot find the jwt in cookie, it mean that the user has not loggined yet or cookie missing.
 		if err != nil {
-			log.Println(err)
+			utils.AppLogger.Info(err.Error(), zap.String("service", "GetAuthMiddleware()"))
 			context.JSON(http.StatusBadRequest, gin.H{
 				"code": constant.JwtMissingError,
 				"data": make(map[string]string),
@@ -30,7 +31,7 @@ func GetAuthMiddleware() func(*gin.Context) {
 		// parse jwt
 		claim, err := utils.ParseJWT(jwtString)
 		if err != nil {
-			log.Println(err)
+			utils.AppLogger.Info(err.Error(), zap.String("service", "GetAuthMiddleware()"))
 			context.JSON(http.StatusBadRequest, gin.H{
 				"code": constant.JwtParseError,
 				"data": make(map[string]string),

@@ -1,10 +1,12 @@
 package v1
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/walk1ng/gin-photo-gallery-storage/utils"
+	"go.uber.org/zap"
 
 	"github.com/astaxie/beego/validation"
 
@@ -21,12 +23,12 @@ func AddPhoto(context *gin.Context) {
 
 	photoFile, fileErr := context.FormFile("photo")
 	if fileErr != nil {
-		log.Println(fileErr)
+		utils.AppLogger.Info(fileErr.Error(), zap.String("service", "AddPhoto()"))
 	}
 
 	paramErr := context.ShouldBindWith(&photoToAdd, binding.Form)
 	if paramErr != nil {
-		log.Println(paramErr)
+		utils.AppLogger.Info(paramErr.Error(), zap.String("service", "AddPhoto()"))
 	}
 
 	if fileErr != nil || paramErr != nil {
@@ -61,7 +63,7 @@ func AddPhoto(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "AddPhoto()"))
 		}
 	}
 
@@ -78,7 +80,7 @@ func DeletePhoto(context *gin.Context) {
 	bucketID, err := strconv.Atoi(context.PostForm("bucket_id"))
 	photoName := context.PostForm("photo_name")
 	if err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "DeletePhoto()"))
 		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code": responseCode,
 			"data": make(map[string]string),
@@ -105,7 +107,7 @@ func DeletePhoto(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "DeletePhoto()"))
 		}
 	}
 
@@ -124,7 +126,7 @@ func UpdatePhoto(context *gin.Context) {
 
 	err := context.ShouldBindWith(&photoToUpdate, binding.Form)
 	if err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "UpdatePhoto()"))
 		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code": responseCode,
 			"data": make(map[string]string),
@@ -154,7 +156,7 @@ func UpdatePhoto(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "UpdatePhoto()"))
 		}
 	}
 
@@ -171,7 +173,7 @@ func GetPhotoByID(context *gin.Context) {
 	photoID, err := strconv.Atoi(context.Query("photo_id"))
 
 	if err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "GetPhotoByID()"))
 		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code": responseCode,
 			"data": make(map[string]string),
@@ -199,7 +201,7 @@ func GetPhotoByID(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "GetPhotoByID()"))
 		}
 	}
 
@@ -217,7 +219,7 @@ func GetPhotoByBucketID(context *gin.Context) {
 	offset := context.GetInt("offset")
 
 	if err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "GetPhotoByBucketID()"))
 		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code": responseCode,
 			"data": make(map[string]string),
@@ -244,7 +246,7 @@ func GetPhotoByBucketID(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "GetPhotoByBucketID()"))
 		}
 	}
 
@@ -270,7 +272,7 @@ func GetPhotoUploadStatus(context *gin.Context) {
 		responseCode = models.GetPhotoUploadStatus(uploadID)
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "GetPhotoUploadStatus()"))
 		}
 	}
 

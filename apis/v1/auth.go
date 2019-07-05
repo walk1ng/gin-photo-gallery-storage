@@ -1,8 +1,9 @@
 package v1
 
 import (
-	"log"
 	"net/http"
+
+	"go.uber.org/zap"
 
 	"github.com/walk1ng/gin-photo-gallery-storage/conf"
 
@@ -41,7 +42,7 @@ func AddAuth(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "AddAuth()"))
 		}
 	}
 
@@ -92,7 +93,7 @@ func CheckAuth(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "CheckAuth()"))
 		}
 	}
 

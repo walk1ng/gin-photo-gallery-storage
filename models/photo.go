@@ -2,9 +2,10 @@ package models
 
 import (
 	"errors"
-	"log"
 	"mime/multipart"
 	"os"
+
+	"go.uber.org/zap"
 
 	"github.com/walk1ng/gin-photo-gallery-storage/utils"
 
@@ -55,7 +56,7 @@ func AddPhoto(photoToAdd *Photo, photoFileHeader *multipart.FileHeader) (*Photo,
 	// insert the new photo to photo table
 	err := trx.Create(&photo).Error
 	if err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "AddPhoto()"))
 		return nil, "", err
 	}
 
@@ -67,7 +68,7 @@ func AddPhoto(photoToAdd *Photo, photoFileHeader *multipart.FileHeader) (*Photo,
 
 	if err != nil {
 		trx.Rollback()
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "AddPhoto()"))
 		return nil, "", err
 	}
 
@@ -76,7 +77,7 @@ func AddPhoto(photoToAdd *Photo, photoFileHeader *multipart.FileHeader) (*Photo,
 		uploadID := utils.Upload(photo.ID, photo.Name, photoFile.(*os.File))
 		return &photo, uploadID, nil
 	} else {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "AddPhoto()"))
 		return nil, "", ErrPhotoFileBroken
 	}
 }
@@ -122,7 +123,7 @@ func UpdatePhoto(photoToUpdate *Photo) (*Photo, error) {
 
 	result := trx.Model(&photo).Updates(*photoToUpdate)
 	if err := result.Error; err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "AddPhoto()"))
 		return nil, err
 	}
 
@@ -143,7 +144,7 @@ func UpdatePhotoURL(photoID uint, url string) error {
 
 	err := trx.Model(&photo).Update("url", url).Error
 	if err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "AddPhoto()"))
 		return err
 	}
 	return nil
@@ -157,7 +158,7 @@ func GetPhotoByID(photoID uint) (*Photo, error) {
 	photo := Photo{}
 	err := trx.Where("id = ?", photoID).First(&photo).Error
 	if err != nil || photoID == 0 {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "AddPhoto()"))
 		return &photo, err
 	}
 

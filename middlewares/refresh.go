@@ -1,8 +1,9 @@
 package middlewares
 
 import (
-	"log"
 	"net/http"
+
+	"go.uber.org/zap"
 
 	"github.com/walk1ng/gin-photo-gallery-storage/conf"
 
@@ -19,7 +20,7 @@ func GetRefreshMiddleware() func(*gin.Context) {
 			// generate a new jwt for the user
 			jwtString, err := utils.GenerateJWT(userName.(string))
 			if err != nil {
-				log.Fatalln(err)
+				utils.AppLogger.Info(err.Error(), zap.String("service", "GetRefreshMiddleware()"))
 				data := make(map[string]string)
 				data["user_name"] = userName.(string)
 				context.JSON(http.StatusBadRequest, gin.H{
@@ -41,7 +42,7 @@ func GetRefreshMiddleware() func(*gin.Context) {
 			// refresh user in the redis, it mean to refresh the key's expiration
 			err = utils.AddAuthToRedis(userName.(string))
 			if err != nil {
-				log.Fatalln(err)
+				utils.AppLogger.Info(err.Error(), zap.String("service", "GetRefreshMiddleware()"))
 				context.JSON(http.StatusBadRequest, gin.H{
 					"code": constant.InternalServerError,
 					"data": make(map[string]string),

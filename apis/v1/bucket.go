@@ -1,9 +1,11 @@
 package v1
 
 import (
-	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/walk1ng/gin-photo-gallery-storage/utils"
+	"go.uber.org/zap"
 
 	"github.com/astaxie/beego/validation"
 
@@ -18,7 +20,7 @@ func AddBucket(context *gin.Context) {
 	responseCode := constant.InvalidParams
 	bucketToAdd := models.Bucket{}
 	if err := context.ShouldBindWith(&bucketToAdd, binding.Form); err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "AddBucket()"))
 		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code": responseCode,
 			"data": make(map[string]string),
@@ -44,7 +46,7 @@ func AddBucket(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "AddBucket()"))
 		}
 	}
 
@@ -63,7 +65,7 @@ func DeleteBucket(context *gin.Context) {
 	responseCode := constant.InvalidParams
 	bucketID, err := strconv.Atoi(context.Query("bucket_id"))
 	if err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "DeleteBucket()"))
 		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code": responseCode,
 			"data": make(map[string]string),
@@ -88,7 +90,7 @@ func DeleteBucket(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "DeleteBucket()"))
 		}
 	}
 
@@ -106,7 +108,7 @@ func UpdateBucket(context *gin.Context) {
 	responseCode := constant.InvalidParams
 	bucketToUpdate := models.Bucket{}
 	if err := context.ShouldBindWith(&bucketToUpdate, binding.Form); err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "UpdateBucket()"))
 		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code": responseCode,
 			"data": make(map[string]string),
@@ -131,7 +133,7 @@ func UpdateBucket(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "UpdateBucket()"))
 		}
 	}
 
@@ -149,7 +151,7 @@ func GetBucketByID(context *gin.Context) {
 	responseCode := constant.InvalidParams
 	bucketID, err := strconv.Atoi(context.Query("bucket_id"))
 	if err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "GetBucketByID()"))
 		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code": responseCode,
 			"data": make(map[string]string),
@@ -176,7 +178,7 @@ func GetBucketByID(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "GetBucketByID()"))
 		}
 	}
 
@@ -193,7 +195,7 @@ func GetBucketByAuthID(context *gin.Context) {
 	authID, err := strconv.Atoi(context.Query("auth_id"))
 	offset := context.GetInt("offset")
 	if err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "GetBucketByAuthID()"))
 		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code": responseCode,
 			"data": make(map[string]string),
@@ -217,7 +219,7 @@ func GetBucketByAuthID(context *gin.Context) {
 		}
 	} else {
 		for _, e := range validCheck.Errors {
-			log.Println(e.Message)
+			utils.AppLogger.Info(e.Message, zap.String("service", "GetBucketByAuthID()"))
 		}
 	}
 

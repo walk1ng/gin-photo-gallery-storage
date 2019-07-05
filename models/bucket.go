@@ -2,9 +2,10 @@ package models
 
 import (
 	"errors"
-	"log"
 
 	"github.com/walk1ng/gin-photo-gallery-storage/constant"
+	"github.com/walk1ng/gin-photo-gallery-storage/utils"
+	"go.uber.org/zap"
 )
 
 // Bucket struct model represent bucket table
@@ -43,7 +44,7 @@ func AddBucket(bucketToAdd *Bucket) error {
 	bucket.Description = bucketToAdd.Description
 
 	if err := trx.Create(&bucket).Error; err != nil {
-		log.Println(err)
+		utils.AppLogger.Info(err.Error(), zap.String("service", "AddBucket()"))
 		return err
 	}
 
