@@ -33,7 +33,8 @@ func init() {
 	dbPwd := conf.ServerCfg.Get(constant.DBPwd)
 	dbName := conf.ServerCfg.Get(constant.DBName)
 
-	db, err := gorm.Open(dbType, fmt.Sprintf(constant.DBConnect, dbUser, dbPwd, dbHost, dbPort, dbName))
+	var err error
+	db, err = gorm.Open(dbType, fmt.Sprintf(constant.DBConnect, dbUser, dbPwd, dbHost, dbPort, dbName))
 	if err != nil {
 		utils.AppLogger.Fatal(err.Error(), zap.String("service", "init()"))
 	}
