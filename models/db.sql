@@ -1,9 +1,9 @@
-create database photo_gallery;
+create database `photo_gallery`;
 
-use photo_gallery;
+use `photo_gallery`;
 
 # table auth
-drop table if exists auth;
+drop table if exists `auth`;
 create table auth 
 (
     id int primary key auto_increment,
@@ -15,8 +15,8 @@ create table auth
 );
 
 # table bucket
-drop table if exists bucket;
-create table bucket
+drop table if exists `bucket`;
+create table `bucket`
 (
     id int primary key auto_increment,
     auth_id int,
@@ -31,8 +31,8 @@ create table bucket
 );
 
 # table photo
-drop table if exists photo;
-create table photo
+drop table if exists `photo`;
+create table `photo`
 (
     id int primary key auto_increment,
     bucket_id int,
